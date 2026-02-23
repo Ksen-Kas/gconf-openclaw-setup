@@ -523,7 +523,7 @@
   <div class="container">
     <span class="badge">gconf · тестовое задание</span>
     <h1>OpenClaw для gconf<br><span style="color: var(--text-dim); font-weight: 300;">установка и защита</span></h1>
-    <p>Cursor-рулбук, который сам ставит OpenClaw на сервер и настраивает безопасность по методологии Мацкевича. Ты только подтверждаешь действия.</p>
+    <p>Cursor-рулбук, который сам ставит OpenClaw на сервер и настраивает безопасность по методологии Димы Мацкевича. Ты только подтверждаешь действия.</p>
   </div>
 </header>
 
@@ -533,7 +533,7 @@
 <section>
   <div class="problem">
     <h3>Проблема</h3>
-    <p>OpenClaw по умолчанию не защищён. Три из четырёх слоёв безопасности не работают надёжно, четвёртый выключен. Настройка защиты требует знаний DevOps, которых у аудитории gconf нет.</p>
+    <p>OpenClaw по умолчанию не защищён. Три из четырёх слоёв безопасности не работают надёжно, четвёртый выключен. Настройка защиты требует знаний DevOps.</p>
     <span class="stat">42 665 открытых инстансов · 93.4% с уязвимостями</span>
   </div>
 
@@ -623,7 +623,7 @@
     <div class="flow-divider fade-in">
       <div class="flow-dot"></div>
       <div class="flow-divider-inner">
-        Здесь у тебя работающий бот. Можно пользоваться. Всё что ниже — защита.
+        Здесь у тебя работающий бот. Ниже настроем защиту.
       </div>
     </div>
 
@@ -636,7 +636,7 @@
           <span class="flow-title">Google Calendar</span>
           <span class="flow-time">~30–60 мин</span>
         </div>
-        <p class="flow-desc">Подключить Google Calendar (опционально, самый сложный шаг)</p>
+        <p class="flow-desc">Подключить Google Calendar (опционально)</p>
         <ul class="flow-steps">
           <li>Ты создаёшь OAuth в Google Cloud Console</li>
           <li>Cursor загружает ключ и проходит авторизацию</li>
@@ -653,7 +653,7 @@
           <span class="flow-title">Безопасность</span>
           <span class="flow-time">~45–60 мин</span>
         </div>
-        <p class="flow-desc">Четыре слоя защиты по методологии Мацкевича. Файл полностью готов и исполняем.</p>
+        <p class="flow-desc">Четыре слоя защиты по методологии Димы Мацкевича. Файл полностью готов и исполняем.</p>
       </div>
     </div>
 
@@ -742,13 +742,13 @@
   <div class="try-it">
     <h3>Попробуй сам</h3>
     <ol class="try-steps">
-      <li>Склонируй репозиторий: <code>git clone github.com/[repo]</code></li>
+      <li>Склонируй репозиторий: <code>git clone <a href="https://github.com/Ksen-Kas/gconf-openclaw-setup" style="color: var(--accent); text-decoration: underline;">github.com/Ksen-Kas/gconf-openclaw-setup</a></code></li>
       <li>Открой папку в Cursor</li>
       <li>Напиши в чат: <code>Начни с README.md</code></li>
       <li>Cursor прочитает правила, откроет фазу и поведёт тебя пошагово</li>
       <li>После каждого шага — автоматическая проверка с результатом ✅/❌</li>
     </ol>
-    <p class="try-note">Для тестирования фазы безопасности нужен работающий OpenClaw на сервере (фазы 1–4). Droplet на DigitalOcean стоит ~$0.05/час — создай, протестируй, удали.</p>
+    <p class="try-note">Для полного тестирования фазы безопасности нужен работающий OpenClaw на сервере (фазы 1–4). Droplet на DigitalOcean — создай, протестируй, удали.</p>
   </div>
 </section>
 
