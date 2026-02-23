@@ -1,0 +1,784 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>OpenClaw для gconf — установка и защита</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #1a1a1f;
+    --bg-card: #232329;
+    --bg-card-hover: #2a2a31;
+    --text: #e8e6e3;
+    --text-dim: #9b9a97;
+    --text-muted: #6b6a68;
+    --accent: #e8a84c;
+    --accent-dim: #c4893a;
+    --green: #6bc77a;
+    --green-dim: #2d3f30;
+    --red: #e06c6c;
+    --blue: #6ca8e0;
+    --border: #333338;
+    --radius: 12px;
+    --radius-sm: 8px;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Outfit', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.65;
+    font-size: 17px;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .container {
+    max-width: 820px;
+    margin: 0 auto;
+    padding: 0 24px;
+  }
+
+  /* ─── HERO ─── */
+  .hero {
+    padding: 80px 0 60px;
+    text-align: center;
+    position: relative;
+  }
+
+  .hero::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 120px;
+    height: 1px;
+    background: var(--border);
+  }
+
+  .badge {
+    display: inline-block;
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--accent);
+    border: 1px solid var(--accent-dim);
+    border-radius: 100px;
+    padding: 6px 16px;
+    margin-bottom: 28px;
+    opacity: 0;
+    animation: fadeUp 0.6s ease forwards;
+  }
+
+  h1 {
+    font-size: clamp(32px, 5vw, 48px);
+    font-weight: 700;
+    line-height: 1.15;
+    letter-spacing: -0.02em;
+    margin-bottom: 20px;
+    opacity: 0;
+    animation: fadeUp 0.6s ease 0.1s forwards;
+  }
+
+  .hero p {
+    font-size: 19px;
+    color: var(--text-dim);
+    max-width: 600px;
+    margin: 0 auto;
+    opacity: 0;
+    animation: fadeUp 0.6s ease 0.2s forwards;
+  }
+
+  /* ─── SECTIONS ─── */
+  section {
+    padding: 60px 0;
+  }
+
+  h2 {
+    font-size: 28px;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    margin-bottom: 12px;
+  }
+
+  h3 {
+    font-size: 20px;
+    font-weight: 600;
+    margin-bottom: 8px;
+  }
+
+  .section-intro {
+    color: var(--text-dim);
+    margin-bottom: 36px;
+    max-width: 640px;
+  }
+
+  /* ─── PROBLEM BLOCK ─── */
+  .problem {
+    background: linear-gradient(135deg, #2a2025 0%, var(--bg-card) 100%);
+    border: 1px solid #3d2a2a;
+    border-radius: var(--radius);
+    padding: 32px;
+    margin-bottom: 48px;
+  }
+
+  .problem h3 {
+    color: var(--red);
+  }
+
+  .problem p {
+    color: var(--text-dim);
+    margin-top: 8px;
+  }
+
+  .stat {
+    display: inline-block;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 15px;
+    font-weight: 500;
+    color: var(--red);
+    background: rgba(224, 108, 108, 0.1);
+    border-radius: 6px;
+    padding: 2px 8px;
+    margin-top: 12px;
+  }
+
+  /* ─── SOLUTION BLOCK ─── */
+  .solution {
+    background: linear-gradient(135deg, #1f2a20 0%, var(--bg-card) 100%);
+    border: 1px solid #2a3d2a;
+    border-radius: var(--radius);
+    padding: 32px;
+    margin-bottom: 48px;
+  }
+
+  .solution h3 {
+    color: var(--green);
+  }
+
+  .solution p {
+    color: var(--text-dim);
+    margin-top: 8px;
+  }
+
+  /* ─── FLOW DIAGRAM ─── */
+  .flow-section {
+    padding: 60px 0;
+  }
+
+  .flow {
+    position: relative;
+  }
+
+  .flow-phase {
+    position: relative;
+    padding-left: 48px;
+    padding-bottom: 8px;
+    margin-bottom: 0;
+  }
+
+  .flow-phase::before {
+    content: '';
+    position: absolute;
+    left: 15px;
+    top: 32px;
+    bottom: 0;
+    width: 2px;
+    background: var(--border);
+  }
+
+  .flow-phase:last-child::before {
+    display: none;
+  }
+
+  .flow-dot {
+    position: absolute;
+    left: 8px;
+    top: 8px;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    border: 2px solid var(--border);
+    background: var(--bg);
+  }
+
+  .flow-phase.done .flow-dot {
+    border-color: var(--green);
+    background: var(--green);
+    box-shadow: 0 0 12px rgba(107, 199, 122, 0.3);
+  }
+
+  .flow-phase.concept .flow-dot {
+    border-color: var(--text-muted);
+    background: transparent;
+  }
+
+  .flow-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 20px 24px;
+    margin-bottom: 12px;
+    transition: background 0.2s ease;
+  }
+
+  .flow-card:hover {
+    background: var(--bg-card-hover);
+  }
+
+  .flow-phase.done .flow-card {
+    border-color: rgba(107, 199, 122, 0.3);
+  }
+
+  .flow-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 6px;
+  }
+
+  .flow-number {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text-muted);
+    background: rgba(255,255,255,0.05);
+    border-radius: 6px;
+    padding: 2px 8px;
+    flex-shrink: 0;
+  }
+
+  .flow-phase.done .flow-number {
+    color: var(--green);
+    background: var(--green-dim);
+  }
+
+  .flow-title {
+    font-weight: 600;
+    font-size: 17px;
+  }
+
+  .flow-time {
+    margin-left: auto;
+    font-size: 14px;
+    color: var(--text-muted);
+    flex-shrink: 0;
+  }
+
+  .flow-desc {
+    color: var(--text-dim);
+    font-size: 15px;
+    margin-left: 0;
+  }
+
+  .flow-steps {
+    margin-top: 10px;
+    padding-left: 0;
+    list-style: none;
+  }
+
+  .flow-steps li {
+    font-size: 14px;
+    color: var(--text-muted);
+    padding: 3px 0;
+    padding-left: 20px;
+    position: relative;
+  }
+
+  .flow-steps li::before {
+    content: '→';
+    position: absolute;
+    left: 0;
+    color: var(--text-muted);
+  }
+
+  .flow-divider {
+    position: relative;
+    padding-left: 48px;
+    margin: 8px 0;
+  }
+
+  .flow-divider-inner {
+    background: linear-gradient(90deg, var(--accent-dim), var(--accent), var(--accent-dim));
+    border-radius: var(--radius-sm);
+    padding: 14px 20px;
+    font-size: 14px;
+    font-weight: 500;
+    color: #1a1a1f;
+    text-align: center;
+    letter-spacing: 0.02em;
+  }
+
+  .flow-divider::before {
+    content: '';
+    position: absolute;
+    left: 15px;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: var(--accent-dim);
+  }
+
+  .flow-divider .flow-dot {
+    border-color: var(--accent);
+    background: var(--accent);
+    box-shadow: 0 0 12px rgba(232, 168, 76, 0.3);
+  }
+
+  /* ─── SECURITY DETAIL ─── */
+  .security-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-top: 24px;
+  }
+
+  @media (max-width: 600px) {
+    .security-grid { grid-template-columns: 1fr; }
+  }
+
+  .sec-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 20px;
+  }
+
+  .sec-card h4 {
+    font-size: 16px;
+    font-weight: 600;
+    margin-bottom: 4px;
+  }
+
+  .sec-icon {
+    font-size: 24px;
+    margin-bottom: 10px;
+    display: block;
+  }
+
+  .sec-card p {
+    font-size: 14px;
+    color: var(--text-dim);
+    line-height: 1.55;
+  }
+
+  /* ─── TRY IT ─── */
+  .try-it {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 36px;
+    margin-top: 48px;
+  }
+
+  .try-it h3 {
+    color: var(--accent);
+    margin-bottom: 16px;
+  }
+
+  .try-steps {
+    list-style: none;
+    padding: 0;
+    counter-reset: try-counter;
+  }
+
+  .try-steps li {
+    counter-increment: try-counter;
+    padding: 12px 0;
+    padding-left: 40px;
+    position: relative;
+    border-bottom: 1px solid var(--border);
+    font-size: 16px;
+  }
+
+  .try-steps li:last-child {
+    border-bottom: none;
+  }
+
+  .try-steps li::before {
+    content: counter(try-counter);
+    position: absolute;
+    left: 0;
+    top: 12px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--accent);
+    background: rgba(232, 168, 76, 0.1);
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .try-steps code {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 14px;
+    background: rgba(255,255,255,0.06);
+    border-radius: 4px;
+    padding: 2px 7px;
+    color: var(--accent);
+  }
+
+  .try-note {
+    font-size: 14px;
+    color: var(--text-muted);
+    margin-top: 16px;
+    font-style: italic;
+  }
+
+  /* ─── RISKS ─── */
+  .risk-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+    font-size: 15px;
+  }
+
+  .risk-table th {
+    text-align: left;
+    font-weight: 500;
+    color: var(--text-muted);
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    padding: 10px 12px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .risk-table td {
+    padding: 12px;
+    border-bottom: 1px solid var(--border);
+    vertical-align: top;
+  }
+
+  .risk-table tr:last-child td {
+    border-bottom: none;
+  }
+
+  .risk-table td:first-child {
+    font-weight: 500;
+    white-space: nowrap;
+  }
+
+  .risk-table td:last-child {
+    color: var(--text-dim);
+  }
+
+  /* ─── CREDITS ─── */
+  .credits {
+    padding: 60px 0 40px;
+    border-top: 1px solid var(--border);
+    color: var(--text-muted);
+    font-size: 14px;
+    text-align: center;
+  }
+
+  .credits a {
+    color: var(--text-dim);
+    text-decoration: underline;
+    text-decoration-color: var(--border);
+    text-underline-offset: 3px;
+    transition: color 0.2s;
+  }
+
+  .credits a:hover {
+    color: var(--accent);
+  }
+
+  /* ─── ANIMATIONS ─── */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(16px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .fade-in {
+    opacity: 0;
+    animation: fadeUp 0.5s ease forwards;
+  }
+
+  .fade-in:nth-child(1) { animation-delay: 0.05s; }
+  .fade-in:nth-child(2) { animation-delay: 0.1s; }
+  .fade-in:nth-child(3) { animation-delay: 0.15s; }
+  .fade-in:nth-child(4) { animation-delay: 0.2s; }
+  .fade-in:nth-child(5) { animation-delay: 0.25s; }
+  .fade-in:nth-child(6) { animation-delay: 0.3s; }
+  .fade-in:nth-child(7) { animation-delay: 0.35s; }
+  .fade-in:nth-child(8) { animation-delay: 0.4s; }
+  .fade-in:nth-child(9) { animation-delay: 0.45s; }
+  .fade-in:nth-child(10) { animation-delay: 0.5s; }
+</style>
+</head>
+<body>
+
+<!-- ════════════════════ HERO ════════════════════ -->
+<header class="hero">
+  <div class="container">
+    <span class="badge">gconf · тестовое задание</span>
+    <h1>OpenClaw для gconf<br><span style="color: var(--text-dim); font-weight: 300;">установка и защита</span></h1>
+    <p>Cursor-рулбук, который сам ставит OpenClaw на сервер и настраивает безопасность по методологии Мацкевича. Ты только подтверждаешь действия.</p>
+  </div>
+</header>
+
+<main class="container">
+
+<!-- ════════════════════ PROBLEM / SOLUTION ════════════════════ -->
+<section>
+  <div class="problem">
+    <h3>Проблема</h3>
+    <p>OpenClaw по умолчанию не защищён. Три из четырёх слоёв безопасности не работают надёжно, четвёртый выключен. Настройка защиты требует знаний DevOps, которых у аудитории gconf нет.</p>
+    <span class="stat">42 665 открытых инстансов · 93.4% с уязвимостями</span>
+  </div>
+
+  <div class="solution">
+    <h3>Решение</h3>
+    <p>Папка с файлами, которая превращает Cursor в пошагового установщика. Cursor читает фазы по порядку, сам выполняет все команды на сервере, после каждого шага проверяет результат и объясняет что сделано. Человек не пишет команды — только подтверждает действия и вводит свои ключи.</p>
+  </div>
+</section>
+
+<!-- ════════════════════ FLOW ════════════════════ -->
+<section class="flow-section">
+  <h2>Полный путь</h2>
+  <p class="section-intro">От нуля до защищённого OpenClaw. Cursor ведёт тебя по каждой фазе. Общее время: ~2–2.5 часа при первой установке.</p>
+
+  <div class="flow">
+
+    <!-- Phase 1 -->
+    <div class="flow-phase concept fade-in">
+      <div class="flow-dot"></div>
+      <div class="flow-card">
+        <div class="flow-header">
+          <span class="flow-number">01</span>
+          <span class="flow-title">Сервер</span>
+          <span class="flow-time">~15 мин</span>
+        </div>
+        <p class="flow-desc">Создать Droplet на DigitalOcean, подключиться по SSH</p>
+        <ul class="flow-steps">
+          <li>Cursor генерирует SSH-ключ</li>
+          <li>Ты копируешь ключ в интерфейс DO и создаёшь сервер</li>
+          <li>Cursor подключается и проверяет связь</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Phase 2 -->
+    <div class="flow-phase concept fade-in">
+      <div class="flow-dot"></div>
+      <div class="flow-card">
+        <div class="flow-header">
+          <span class="flow-number">02</span>
+          <span class="flow-title">OpenClaw</span>
+          <span class="flow-time">~20 мин</span>
+        </div>
+        <p class="flow-desc">Установить OpenClaw на сервер и проверить что работает</p>
+        <ul class="flow-steps">
+          <li>Cursor устанавливает и настраивает всё сам</li>
+          <li>Ты видишь: «OpenClaw работает на сервере»</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Phase 3 -->
+    <div class="flow-phase concept fade-in">
+      <div class="flow-dot"></div>
+      <div class="flow-card">
+        <div class="flow-header">
+          <span class="flow-number">03</span>
+          <span class="flow-title">Telegram</span>
+          <span class="flow-time">~10 мин</span>
+        </div>
+        <p class="flow-desc">Подключить бота, настроить доступ только для тебя</p>
+        <ul class="flow-steps">
+          <li>Ты создаёшь бота в BotFather и копируешь токен</li>
+          <li>Cursor привязывает бота к твоему Telegram ID</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Phase 4 -->
+    <div class="flow-phase concept fade-in">
+      <div class="flow-dot"></div>
+      <div class="flow-card">
+        <div class="flow-header">
+          <span class="flow-number">04</span>
+          <span class="flow-title">Модель</span>
+          <span class="flow-time">~10 мин</span>
+        </div>
+        <p class="flow-desc">Подключить LLM-провайдера (OpenAI или Anthropic)</p>
+        <ul class="flow-steps">
+          <li>Ты даёшь API-ключ или логинишься</li>
+          <li>Cursor проверяет что модель отвечает</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Divider -->
+    <div class="flow-divider fade-in">
+      <div class="flow-dot"></div>
+      <div class="flow-divider-inner">
+        Здесь у тебя работающий бот. Можно пользоваться. Всё что ниже — защита.
+      </div>
+    </div>
+
+    <!-- Phase 5 -->
+    <div class="flow-phase concept fade-in">
+      <div class="flow-dot"></div>
+      <div class="flow-card">
+        <div class="flow-header">
+          <span class="flow-number">05</span>
+          <span class="flow-title">Google Calendar</span>
+          <span class="flow-time">~30–60 мин</span>
+        </div>
+        <p class="flow-desc">Подключить Google Calendar (опционально, самый сложный шаг)</p>
+        <ul class="flow-steps">
+          <li>Ты создаёшь OAuth в Google Cloud Console</li>
+          <li>Cursor загружает ключ и проходит авторизацию</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Phase 6 — DONE -->
+    <div class="flow-phase done fade-in">
+      <div class="flow-dot"></div>
+      <div class="flow-card">
+        <div class="flow-header">
+          <span class="flow-number">06</span>
+          <span class="flow-title">Безопасность</span>
+          <span class="flow-time">~45–60 мин</span>
+        </div>
+        <p class="flow-desc">Четыре слоя защиты по методологии Мацкевича. Файл полностью готов и исполняем.</p>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ════════════════════ SECURITY DETAIL ════════════════════ -->
+<section>
+  <h2>Фаза 6 — что внутри</h2>
+  <p class="section-intro">Cursor выполняет четыре шага, после каждого — автоматическая проверка. Ты видишь только результат: ✅ или ❌.</p>
+
+  <div class="security-grid">
+    <div class="sec-card fade-in">
+      <span class="sec-icon">🔒</span>
+      <h4>Песочница (bwrap)</h4>
+      <p>Каждая команда агента выполняется в изолированном пространстве. Даже если агент получит вредоносную инструкцию — он не выберется за пределы своей папки.</p>
+    </div>
+    <div class="sec-card fade-in">
+      <span class="sec-icon">📁</span>
+      <h4>Ограничение файлов</h4>
+      <p>Хук проверяет каждое обращение к файлам до выполнения. Агент может трогать только рабочую папку. Закрывает дыру, где exec обходит ограничения write.</p>
+    </div>
+    <div class="sec-card fade-in">
+      <span class="sec-icon">🔐</span>
+      <h4>Шифрование ключей</h4>
+      <p>API-ключи зашифрованы на диске. Расшифровываются только в оперативную память при запуске. Если кто-то скопирует файлы — увидит шифр, а не пароли.</p>
+    </div>
+    <div class="sec-card fade-in">
+      <span class="sec-icon">🛡</span>
+      <h4>Защита от слива</h4>
+      <p>Фильтр на исходящие сообщения ловит API-ключи. Сторож настроек откатывает несанкционированные изменения. Логи пишутся и ротируются.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════ RISKS ════════════════════ -->
+<section>
+  <h2>Матрица рисков</h2>
+  <p class="section-intro">Что может пойти не так на разных этапах и как рулбук это учитывает.</p>
+
+  <table class="risk-table">
+    <thead>
+      <tr>
+        <th>Условие</th>
+        <th>Риск</th>
+        <th>Решение в рулбуке</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>ОС</td>
+        <td>Windows: SSH работает иначе</td>
+        <td>Первая версия — Mac/Linux. Windows-ветка отдельно</td>
+      </tr>
+      <tr>
+        <td>Google OAuth</td>
+        <td>30 мин + 6 попыток (реальный кейс)</td>
+        <td>Google — опциональная фаза, не блокирует основной flow</td>
+      </tr>
+      <tr>
+        <td>Безопасность</td>
+        <td>bwrap/vault — DevOps-уровень, пользователь не дебажит</td>
+        <td>Fallback для каждого шага: «если не получилось — вот что теряешь»</td>
+      </tr>
+      <tr>
+        <td>Мотивация</td>
+        <td>40 мин на одном шаге → бросает</td>
+        <td>Первые 4 фазы = работающий бот за 45 мин. Безопасность — после</td>
+      </tr>
+      <tr>
+        <td>Cursor</td>
+        <td>Поведение меняется между версиями</td>
+        <td>Модульная структура: починить одну фазу, не трогая остальные</td>
+      </tr>
+      <tr>
+        <td>Карта для DO</td>
+        <td>Иностранные карты иногда не проходят</td>
+        <td>Стоп-фактор, не контролируем. Указано в требованиях</td>
+      </tr>
+    </tbody>
+  </table>
+</section>
+
+<!-- ════════════════════ TRY IT ════════════════════ -->
+<section>
+  <div class="try-it">
+    <h3>Попробуй сам</h3>
+    <ol class="try-steps">
+      <li>Склонируй репозиторий: <code>git clone github.com/[repo]</code></li>
+      <li>Открой папку в Cursor</li>
+      <li>Напиши в чат: <code>Начни с README.md</code></li>
+      <li>Cursor прочитает правила, откроет фазу и поведёт тебя пошагово</li>
+      <li>После каждого шага — автоматическая проверка с результатом ✅/❌</li>
+    </ol>
+    <p class="try-note">Для тестирования фазы безопасности нужен работающий OpenClaw на сервере (фазы 1–4). Droplet на DigitalOcean стоит ~$0.05/час — создай, протестируй, удали.</p>
+  </div>
+</section>
+
+<!-- ════════════════════ SOURCES ════════════════════ -->
+<section>
+  <h2>Источники</h2>
+  <p class="section-intro">Рулбук основан на двух материалах:</p>
+
+  <div style="display: flex; flex-direction: column; gap: 16px;">
+    <div class="sec-card">
+      <h4>Стрим Лёши — третий стрим по вайп-кодингу</h4>
+      <p>Реальная установка OpenClaw с нуля на DigitalOcean. Все грабли, обходы, тайминги. Показывает путь нетехнического человека с Cursor.</p>
+    </div>
+    <div class="sec-card">
+      <h4>Дима Мацкевич — «openclaw: почему безопасность из доков — декорация»</h4>
+      <p>Технический разбор четырёх слоёв защиты OpenClaw. Конкретное решение: bwrap + fs-guard + SOPS+age + DLP. Код открыт на GitHub.</p>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<!-- ════════════════════ CREDITS ════════════════════ -->
+<footer class="credits">
+  <div class="container">
+    <p>gconf · февраль 2026<br>
+    Методология безопасности: <a href="https://dimamatskevich.substack.com">Дима Мацкевич</a> · 
+    Референс: <a href="https://github.com/matskevich/openclaw-infra">openclaw-infra</a></p>
+  </div>
+</footer>
+
+</body>
+</html>
